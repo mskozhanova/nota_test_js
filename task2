@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Table</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>DateTime</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="data-table">
+            <!-- Table rows will be added dynamically here -->
+        </tbody>
+    </table>
+
+    <button id="add-entry">Add New Entry</button>
+
+    <script>
+        $(document).ready(function() {
+            // Function to fetch and display data from the backend (mock data)
+            function fetchData() {
+                // Mocked data - you can replace this with an actual backend API call
+                const mockData = [
+                    { ID: 1, name: "Entry 1", datetime: "2023-11-03 10:00:00" },
+                    { ID: 2, name: "Entry 2", datetime: "2023-11-03 11:00:00" }
+                ];
+
+                // Display data in the table
+                const table = $("#data-table");
+                table.empty(); // Clear the table first
+
+                mockData.forEach(entry => {
+                    const row = `
+                        <tr data-id="${entry.ID}">
+                            <td>${entry.ID}</td>
+                            <td class="editable">${entry.name}</td>
+                            <td>${entry.datetime}</td>
+                            <td>
+                                <button class="edit">Edit</button>
+                                <button class="delete">Delete</button>
+                            </td>
+                        </tr>`;
+                    table.append(row);
+                });
+            }
+
+            // Initial data retrieval
+            fetchData();
+
+            // Add new entry button click event
+            $("#add-entry").click(function() {
+                const newRow = `
+                    <tr>
+                        <td></td>
+                        <td><input type="text" class="new-entry-name" placeholder="Name"></td>
+                        <td></td>
+                        <td>
+                            <button class="send">Send</button>
+                        </td>
+                    </tr>`;
+                $("#data-table").append(newRow);
+            });
+
+            // Save button click event (used for both saving new entries and edited entries)
+            $("#data-table").on("click", ".send", function() {
+                const newRow = $(this).closest("tr");
+                const newName = newRow.find(".new-entry-name").val();
+
+                // Mocked request - you can replace this with an actual backend API call
+                // On success, update the ID and replace the row
+                const newID = 3; // Mocked new ID
+                newRow.attr("data-id", newID);
+                newRow.find("td:first").text(newID);
+                newRow.find("td.editable").text(newName);
+                newRow.find("td input").remove();
+                newRow.find(".send").text("Edit");
+
+                // Clear the input fields for the next entry
+                $("#add-entry").click();
+            });
+
+            // Edit button click event
+            $("#data-table").on("click", ".edit", function() {
+                const row = $(this).closest("tr");
+                const nameField = row.find(".editable");
+                if (nameField.is("input")) {
+                    // Saving edited entry
+                    const newName = nameField.val();
+                    const ID = row.data("id");
+
+                    // Mocked request - you can replace this with an actual backend API call
+                    // On success, update the row
+                    nameField.replaceWith(newName);
+                    $(this).text("Edit");
+                } else {
+                    // Editing the entry
+                    const currentName = nameField.text();
+                    nameField.html(`<input type="text" class="edit-entry-name" value="${currentName}">`);
+                    $(this).text("Save");
+                }
+            });
+
+            // Delete button click event
+            $("#data-table").on("click", ".delete", function() {
+                const row = $(this).closest("tr");
+                const ID = row.data("id");
+
+                // Mocked request - you can replace this with an actual backend API call
+                // On success, remove the row
+                row.remove();
+            });
+        });
+    </script>
+</body>
+</html>
