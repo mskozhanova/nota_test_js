@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Reordering</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div id="button-container">
+        <button class="btn">1</button>
+        <button class="btn">2</button>
+        <button class="btn">3</button>
+        <!-- You can add more buttons here if needed -->
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Attach a click event handler to all buttons with the class "btn"
+            $('.btn').click(function() {
+                // Find the index of the clicked button among its siblings
+                var index = $(this).index();
+
+                // Check if there is an upper neighbor (previous sibling)
+                if (index > 0) {
+                    // Move the clicked button before its upper neighbor
+                    $(this).insertBefore($(this).prev());
+                } else {
+                    // Check if there is a below neighbor (next sibling)
+                    var $next = $(this).next();
+                    if ($next.length) {
+                        // Move the clicked button after its below neighbor
+                        $(this).insertAfter($next);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
