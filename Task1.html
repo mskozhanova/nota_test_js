@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Swapping</title>
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <!-- Buttons with ids 1, 2, and 3 -->
+        <button id="button1">1</button></br>
+        <button id="button2">2</button></br>
+        <button id="button3">3</button></br>
+        <!-- Add more buttons as needed -->
+    </div>
+
+    <script>
+        // Function to handle button click event
+        function swapButtons() {
+            var currentButton = $(this);
+            var prevButton = currentButton.prev();
+
+            // If no upper neighbor exists, swap with the below neighbor
+            if (prevButton.length === 0) {
+                var nextButton = currentButton.next();
+                currentButton.insertAfter(nextButton);
+            } else {
+                currentButton.insertBefore(prevButton);
+            }
+        }
+
+        // Attach click event handler to all buttons
+        $('button').on('click', swapButtons);
+    </script>
+</body>
+</html>
