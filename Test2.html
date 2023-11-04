@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table</title>
+    <!-- Include jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .editable {
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .newName {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .action-buttons button {
+            margin-right: 5px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .action-buttons button.editBtn {
+            background-color: #2196F3;
+        }
+
+        .action-buttons button.saveBtn {
+            background-color: #4caf50;
+        }
+
+        .action-buttons button.deleteBtn {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button id="addBtn">Add New Entry</button>
+    </div>
+    <table id="dataTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Datetime</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Table rows will be appended here -->
+        </tbody>
+    </table>
+
+    <script>
+        // Mock data
+        var mockData = [
+            { id: 1, name: "Entry 1", datetime: "2023-11-05 10:30:00" },
+            { id: 2, name: "Entry 2", datetime: "2023-11-06 14:45:00" }
+        ];
+
+        // Function to render table rows
+        function renderTable() {
+            var tbody = $('#dataTable tbody');
+            tbody.empty();
+            $.each(mockData, function (index, item) {
+                var row = `<tr>
+                            <td>${item.id}</td>
+                            <td class="editable">${item.name}</td>
+                            <td>${item.datetime}</td>
+                            <td>
+                                <button class="editBtn">Edit</button>
+                                <button class="deleteBtn">Delete</button>
+                                <button class="saveBtn" style="display: none;">Save</button>
+                            </td>
+                        </tr>`;
+                tbody.append(row);
+            });
+        }
+
+        // Render initial table
+        renderTable();
+
+        // Add new entry button click event
+        $('#addBtn').on('click', function () {
+            var newRow = `<tr>
+                            <td></td>
+                            <td><input type="text" class="newName"></td>
+                            <td></td>
+                            <td><button class="sendBtn">Send</button></td>
+                        </tr>`;
+            $('#dataTable tbody').append(newRow);
+        });
+
+        // Handle Send button click event
+        $('#dataTable').on('click', '.sendBtn', function () {
+            var newName = $(this).closest('tr').find('.newName').val();
+            // Mock request to backend
+            // On success, get the new ID and update the mock data
+            var newId = Math.floor(Math.random() * 100) + 1; // Mock new ID
+            mockData.push({ id: newId, name: newName, datetime: '2023-11-07 09:15:00' });
+            renderTable();
+        });
+
+        // Handle Edit button click event
+        $('#dataTable').on('click', '.editBtn', function () {
+            var row = $(this).closest('tr');
+            row.find('.editable').attr('contenteditable', 'true');
+            row.find('.editBtn').hide();
+            row.find('.saveBtn').show();
+        });
+
+        // Handle Save button click event
+        $('#dataTable').on('click', '.saveBtn', function () {
+            var row = $(this).closest('tr');
+            var id = row.find('td:first').text();
+            var name = row.find('.editable').text();
+            // Mock request to backend to update data
+            // On success, update the mock data
+            var updatedData = mockData.map(item => {
+                if (item.id == id) {
+                    item.name = name;
+                }
+                return item;
+            });
+            mockData = updatedData;
+            renderTable();
+        });
+
+        // Handle Delete button click event
+        $('#dataTable').on('click', '.deleteBtn', function () {
+            var row = $(this).closest('tr');
+            var id = row.find('td:first').text();
+            // Mock request to backend to delete data
+            // On success, update the mock data
+            var updatedData = mockData.filter(item => item.id != id);
+            mockData = updatedData;
+            renderTable();
+        });
+    </script>
+</body>
+
+</html>
