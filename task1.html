@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Swap</title>
+</head>
+<body>
+    <button class="btn" id="btn1">1</button><br/>
+    <button class="btn" id="btn2">2</button><br/>
+    <button class="btn" id="btn3">3</button><br/>
+
+    
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+<script>
+
+  $(document).ready(function() {
+     $('.btn').click(function() {
+        var $current = $(this);
+        var $prev = $current.prev('.btn');
+
+        if ($prev.length) {
+            $prev.before($current);
+        } else {
+            var $next = $current.next('.btn');
+            $current.after($next);
+        }
+     });
+  });
+
+</script>
