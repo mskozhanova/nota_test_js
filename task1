@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Swapping</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Create a container to hold the buttons -->
+<div id="button-container">
+    <button class="btn">1</button>
+    <button class="btn">2</button>
+    <button class="btn">3</button>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Attach a click event handler to all buttons with class "btn"
+    $('.btn').on('click', function() {
+        // Get the index of the clicked button within the container
+        var currentIndex = $(this).index();
+        var buttons = $('#button-container .btn');
+        
+        // Check if there's an upper neighbor
+        if (currentIndex > 0) {
+            // Swap the clicked button with its upper neighbor
+            $(this).insertBefore(buttons.eq(currentIndex - 1));
+        } else {
+            // Swap the clicked button with its below neighbor
+            $(this).insertAfter(buttons.eq(currentIndex + 1));
+        }
+    });
+});
+</script>
+
+</body>
+</html>
