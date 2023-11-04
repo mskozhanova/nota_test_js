@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        button {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="addNew">Add New Entry</button>
+
+    <table id="dataTable">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Datetime</th>
+            <th>Actions</th>
+        </tr>
+        <!-- Mock data -->
+        <tr>
+            <td>1</td>
+            <td>Sample Name 1</td>
+            <td>2023-11-01 12:00:00</td>
+            <td>
+                <button class="edit">Edit</button>
+                <button class="delete">Delete</button>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Sample Name 2</td>
+            <td>2023-11-02 12:00:00</td>
+            <td>
+                <button class="edit">Edit</button>
+                <button class="delete">Delete</button>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        $(document).ready(function () {
+
+            // Function to add a new row
+            function addRow(data) {
+                var row = '<tr><td>' + data.id + '</td><td>' + data.name + '</td><td>' + data.datetime + '</td><td><button class="edit">Edit</button><button class="delete">Delete</button></td></tr>';
+                $('#dataTable').append(row);
+            }
+
+            // Function to handle the 'Add New Entry' button click
+            $('#addNew').click(function () {
+                var newRow = '<tr><td></td><td><input type="text" id="newName"></td><td></td><td><button class="send">Send</button></td></tr>';
+                $('#dataTable').append(newRow);
+
+                // Function to handle the 'Send' button click
+                $('.send').click(function () {
+                    var name = $('#newName').val();
+                    // Mock API call
+                    $.ajax({
+                        url: 'backend/add',
+                        type: 'POST',
+                        data: { name: name },
+                        success: function (data) {
+                            addRow(data);
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+                });
+            });
+
+            // Function to handle the 'Edit' button click
+            $(document).on('click', '.edit', function () {
+                var row = $(this).closest('tr');
+                var name = row.find('td:eq(1)').text();
+                row.find('td:eq(1)').html('<input type="text" class="editName" value="' + name + '">');
+                $(this).text('Save').removeClass('edit').addClass('save');
+            });
+
+            // Function to handle the 'Save' button click
+            $(document).on('click', '.save', function () {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text();
+                var name = row.find('.editName').val();
+                // Mock API call
+                $.ajax({
+                    url: 'backend/update',
+                    type: 'POST',
+                    data: { id: id, name: name },
+                    success: function (data) {
+                        row.find('td:eq(1)').text(data.name);
+                        row.find('.save').text('Edit').removeClass('save').addClass('edit');
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+
+            // Function to handle the 'Delete' button click
+            $(document).on('click', '.delete', function () {
+                var row = $(this).closest('tr');
+                var id = row.find('td:eq(0)').text();
+                // Mock API call
+                $.ajax({
+                    url: 'backend/delete',
+                    type: 'POST',
+                    data: { id: id },
+                    success: function () {
+                        row.remove();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+
+</html>
