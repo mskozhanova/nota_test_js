@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- Create a table to display the data -->
+<table id="data-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Datetime</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Data rows will be added here dynamically -->
+    </tbody>
+</table>
+
+<!-- Add New Entry Button -->
+<button id="add-new-entry">Add New Entry</button>
+
+<script>
+$(document).ready(function() {
+    // Function to populate the table with data (You can replace this with real data)
+    function populateTable() {
+        // Mock data (replace with your backend API call)
+        var data = [
+            { id: 1, name: "Record 1", datetime: "2023-11-04 14:30:00" },
+            { id: 2, name: "Record 2", datetime: "2023-11-05 10:15:00" },
+        ];
+
+        var tbody = $('#data-table tbody');
+        tbody.empty(); // Clear existing rows
+
+        // Loop through the data and add rows to the table
+        $.each(data, function(index, item) {
+            var row = $('<tr>');
+            row.append($('<td>').text(item.id));
+            
+            // Create editable input for the name
+            var nameInput = $('<input type="text">').val(item.name).prop('disabled', true);
+            row.append($('<td>').append(nameInput));
+            
+            row.append($('<td>').text(item.datetime));
+            
+            // Add Edit, Delete buttons and their click handlers
+            var editButton = $('<button>Edit</button>');
+            var deleteButton = $('<button>Delete</button>');
+            row.append($('<td>').append(editButton, deleteButton));
+            
+            // Edit button click handler
+            editButton.click(function() {
+                nameInput.prop('disabled', false);
+                editButton.prop('disabled', true).text('Save');
+            });
+            
+            // Save button click handler
+            var saveButton = $('<button>Save</button>').click(function() {
+                // Send a request to update the data (mocked request)
+                var updatedName = nameInput.val();
+                // Mock request for demonstration purposes
+                // Replace with actual API call
+                $.ajax({
+                    type: "POST",
+                    url: "/api/updateRecord",
+                    data: { id: item.id, name: updatedName },
+                    success: function(response) {
+                        // On success, revert to edit mode
+                        nameInput.prop('disabled', true);
+                        editButton.prop('disabled', false).text('Edit');
+                    },
+                    error: function(err) {
+                        // Handle error (e.g., show an error message in the UI)
+                        console.log("Error: " + err.responseText);
+                    }
+                });
+            });
+            row.find('td:last').append(saveButton);
+            
+            // Delete button click handler
+            deleteButton.click(function() {
+                // Send a request to delete the data (mocked request)
+                // Mock request for demonstration purposes
+                // Replace with actual API call
+                $.ajax({
+                    type: "POST",
+                    url: "/api/deleteRecord",
+                    data: { id: item.id },
+                    success: function() {
+                        row.remove(); // Remove the row on success
+                    },
+                    error: function(err) {
+                        // Handle error (e.g., show an error message in the UI)
+                        console.log("Error: " + err.responseText);
+                    }
+                });
+            });
+            
+            tbody.append(row);
+        });
+    }
+
+    // Populate the initial data
+    populateTable();
+
+    // Add New Entry button click handler
+    $('#add-new-entry').click(function() {
+        // Mock request for adding a new entry (you can replace this)
+        // On success, you would receive the new ID
+        var newEntry = {
+            id: 3, // Replace with the actual new ID from the server
+            name: "",
+            datetime: new Date().toLocaleString(),
+        };
+
+        // Add the new row to the table
+        var tbody = $('#data-table tbody');
+        var newRow = $('<tr>');
+        newRow.append($('<td>').text(newEntry.id));
+        
+        // Create an editable input for the name
+        var nameInput = $('<input type="text">').val(newEntry.name).prop('disabled', false);
+        newRow.append($('<td>').append(nameInput));
+        
+        newRow.append($('<td>').text(newEntry.datetime));
+        
+        // Create Save and Delete buttons for the new row
+        var saveButton = $('<button>Save</button>').click(function() {
+            // Send a request to add the new record to the backend
+            var newName = nameInput.val();
+            // Mock request for demonstration purposes
+            // Replace with actual API call
+            $.ajax({
+                type: "POST",
+                url: "/api/addNewRecord",
+                data: { name: newName },
+                success: function(response) {
+                    newEntry.id = response.id; // Update with the actual new ID
+                    nameInput.prop('disabled', true);
+                    saveButton.prop('disabled', false).text('Edit');
+                    newRow.find('td:last').empty().append(editButton, deleteButton);
+                },
+                error: function(err) {
+                    // Handle error (e.g., show an error message in the UI)
+                    console.log("Error: " + err.responseText);
+                }
+            });
+        });
+
+        var editButton = $('<button>Edit</button>').click(function() {
+            nameInput.prop('disabled', false);
+            saveButton.prop('disabled', true).text('Save');
+        });
+
+        var deleteButton = $('<button>Delete</button>').click(function() {
+            // Send a request to delete the new record (mocked request)
+            // Mock request for demonstration purposes
+            // Replace with actual API call
+            $.ajax({
+                type: "POST",
+                url: "/api/deleteRecord",
+                data: { id: newEntry.id },
+                success: function() {
+                    newRow.remove(); // Remove the row on success
+                },
+                error: function(err) {
+                    // Handle error (e.g., show an error message in the UI)
+                    console.log("Error: " + err.responseText);
+                }
+            });
+        });
+        
+        newRow.append($('<td>').append(saveButton, deleteButton));
+        tbody.append(newRow);
+    });
+});
+</script>
+
+</body>
+</html>
