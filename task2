@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Table CRUD</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <button id="addEntryBtn">Add New Entry</button>
+    <table id="data">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Datetime</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+    <script>
+        // Mock data for the initial table
+        const mockData = [
+            { id: 1, name: "Entry 1", datetime: "2023-11-07 14:30:00" },
+            { id: 2, name: "Entry 2", datetime: "2023-11-08 15:45:00" }
+            // ... add more data as needed
+        ];
+
+        // Function to create a row in the table
+        function createRow(entry) {
+            const row = `
+                <tr>
+                    <td>${entry.id}</td>
+                    <td><span class="name">${entry.name}</span><input class="editable" type="text" value="${entry.name}" style="display: none;"></td>
+                    <td>${entry.datetime}</td>
+                    <td>
+                        <button class="edit">Edit</button>
+                        <button class="save" style="display: none;">Save</button>
+                        <button class="delete" data-id="${entry.id}">Delete</button>
+                    </td>
+                </tr>`;
+            return row;
+        }
+
+        // Function to populate the table with initial data
+        function populateTable() {
+            mockData.forEach(entry => {
+                $('#tableBody').append(createRow(entry));
+            });
+        }
+
+        // Function to add a new entry
+        $('#addEntryBtn').on('click', function() {
+            const newRow = { id: mockData.length + 1, name: '', datetime: new Date().toISOString() };
+            mockData.push(newRow);
+            $('#tableBody').append(createRow(newRow));
+        });
+
+        // Edit button functionality
+        $('#data').on('click', '.edit', function() {
+            $(this).closest('tr').find('.name, .editable').toggle();
+            $(this).closest('tr').find('.edit, .save').toggle();
+        });
+
+        // Save button functionality
+        $('#data').on('click', '.save', function() {
+            const row = $(this).closest('tr');
+            const newName = row.find('.editable').val();
+            row.find('.name').text(newName);
+            row.find('.name, .editable').toggle();
+            row.find('.edit, .save').toggle();
+            // Perform AJAX request to save the changes to the backend
+            // On success, update the data in mockData array
+        });
+
+        // Delete button functionality
+        $('#data').on('click', '.delete', function() {
+            const id = $(this).data('id');
+            $(this).closest('tr').remove();
+            // Perform AJAX request to delete the entry with the given ID
+            // On success, remove the corresponding entry from the mockData array
+        });
+
+        // Populate the table with initial data
+        populateTable();
+    </script>
+</body>
+</html>
