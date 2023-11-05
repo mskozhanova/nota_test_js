@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Button Placement</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <button id="button1">1</button>
+    <button id="button2">2</button>
+    <button id="button3">3</button>
+
+    <script>
+        $(document).ready(function() {
+            // On button click
+            $('button').on('click', function() {
+                var currentButton = $(this);
+                var prevButton = currentButton.prev('button');
+                var nextButton = currentButton.next('button');
+
+                if (prevButton.length) {
+                    prevButton.before(currentButton); // Change places with the upper neighbor
+                } else if (nextButton.length) {
+                    nextButton.after(currentButton); // Change places with the below neighbor
+                }
+            });
+        });
+    </script>
+</body>
+</html>
